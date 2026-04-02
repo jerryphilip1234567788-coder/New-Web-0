@@ -1,0 +1,2602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Zero to Pro</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green-dark: #0a4d2e;
+            --green-mid: #147d4e;
+            --green-light: #1db954;
+            --green-pale: #e8f5e9;
+            --white: #ffffff;
+            --black: #1a1a1a;
+            --gray-dark: #333333;
+            --gray-mid: #666666;
+            --gray-light: #f5f5f5;
+            --gold: #ffd700;
+            --red: #e74c3c;
+            --blue: #3498db;
+            --shadow: 0 4px 20px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gray-light);
+            color: var(--gray-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--green-pale); }
+        ::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--green-dark); }
+
+        /* ===== NAVIGATION ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 77, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0 2rem;
+            transition: var(--transition);
+            border-bottom: 2px solid var(--green-light);
+        }
+
+        .navbar.scrolled {
+            padding: 0 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .nav-logo span { color: var(--gold); }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 0.2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--white);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--white);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a4d2e 0%, #147d4e 30%, #0d3d24 70%, #062a16 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(29, 185, 84, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .hero-stadium {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-stadium::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(29, 185, 84, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-stadium::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 200px;
+            background: linear-gradient(to top, rgba(20, 125, 78, 0.4), transparent);
+            border-radius: 50% 50% 0 0;
+        }
+
+        .field-lines {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 300px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            z-index: 1;
+        }
+
+        .field-lines::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .field-lines::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            color: var(--white);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--green-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-light), var(--green-mid));
+            color: var(--white);
+            box-shadow: 0 4px 20px rgba(29, 185, 84, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(29, 185, 84, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-stat .number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold);
+        }
+
+        .hero-stat .label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-full {
+            padding: 6rem 2rem;
+        }
+
+        .section-dark {
+            background: var(--green-dark);
+            color: var(--white);
+        }
+
+        .section-light {
+            background: var(--white);
+        }
+
+        .section-green {
+            background: var(--green-pale);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: rgba(29, 185, 84, 0.1);
+            color: var(--green-mid);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-dark .section-tag {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--gold);
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--black);
+        }
+
+        .section-dark .section-header h2 { color: var(--white); }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--gray-mid);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section-dark .section-header p { color: rgba(255,255,255,0.7); }
+
+        /* ===== CARDS GRID ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green-light), var(--green-mid));
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card:hover::before { transform: scaleX(1); }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--green-pale);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--black);
+        }
+
+        .card p {
+            color: var(--gray-mid);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ===== POSITIONS GRID ===== */
+        .positions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .position-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .position-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .position-header {
+            padding: 2rem;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+        }
+
+        .position-header.gk { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .position-header.def { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .position-header.mid { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .position-header.fwd { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+        .position-header .pos-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+        .position-header h3 { font-size: 1.4rem; font-weight: 700; }
+        .position-header .pos-abbr { font-size: 0.9rem; opacity: 0.8; }
+
+        .position-body {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .position-body ul {
+            list-style: none;
+        }
+
+        .position-body li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--gray-mid);
+            font-size: 0.9rem;
+        }
+
+        .position-body li:last-child { border: none; }
+        .position-body li::before { content: '✓ '; color: var(--green-light); font-weight: 700; }
+
+        /* ===== RULES TABLE ===== */
+        .rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .rules-table thead {
+            background: var(--green-dark);
+            color: var(--white);
+        }
+
+        .rules-table th {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .rules-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--gray-mid);
+        }
+
+        .rules-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .rules-table tbody tr:hover {
+            background: var(--green-pale);
+        }
+
+        .card-badge {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .card-badge.yellow { background: #fff3cd; color: #856404; }
+        .card-badge.red { background: #f8d7da; color: #721c24; }
+
+        /* ===== SKILLS SECTION ===== */
+        .skills-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .skill-visual {
+            background: var(--green-dark);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .skill-visual .big-emoji {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        .skill-visual h3 {
+            color: var(--white);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-visual p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .skill-details h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--black);
+        }
+
+        .skill-details > p {
+            color: var(--gray-mid);
+            margin-bottom: 2rem;
+        }
+
+        .skill-list {
+            list-style: none;
+        }
+
+        .skill-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .skill-item:last-child { border: none; }
+
+        .skill-item .skill-num {
+            width: 36px;
+            height: 36px;
+            background: var(--green-light);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .skill-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .skill-item p {
+            font-size: 0.9rem;
+            color: var(--gray-mid);
+        }
+
+        /* ===== TRAINING GUIDE ===== */
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .training-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .training-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .training-card-header {
+            background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+            color: var(--white);
+            padding: 1.5rem;
+        }
+
+        .training-card-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .training-card-header span {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .training-card-body {
+            padding: 1.5rem;
+        }
+
+        .training-card-body ul {
+            list-style: none;
+        }
+
+        .training-card-body li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--gray-mid);
+            font-size: 0.9rem;
+        }
+
+        .training-card-body li:last-child { border: none; }
+        .training-card-body li strong { color: var(--gray-dark); }
+
+        /* ===== TACTICS ===== */
+        .formations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .formation-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .formation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .formation-pitch {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(180deg, #2d8a4e 0%, #1e6b3a 100%);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .formation-pitch::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .formation-pitch::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+
+        .formation-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--green-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .formation-desc {
+            color: var(--gray-mid);
+            font-size: 0.9rem;
+        }
+
+        .dot {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--white);
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .dot.gk-dot { border-color: #f39c12; }
+        .dot.def-dot { border-color: #3498db; }
+        .dot.mid-dot { border-color: #2ecc71; }
+        .dot.fwd-dot { border-color: #e74c3c; }
+
+        /* ===== PLAYERS SECTION ===== */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .player-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .player-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .player-avatar {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+        }
+
+        .player-avatar.messi { background: linear-gradient(135deg, #a8c1ff, #6c8fd8); }
+        .player-avatar.ronaldo { background: linear-gradient(135deg, #ff6b6b, #c0392b); }
+        .player-avatar.neymar { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .player-avatar.mbahape { background: linear-gradient(135deg, #3498db, #2980b9); }
+
+        .player-info {
+            padding: 1.5rem;
+        }
+
+        .player-info h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .player-info .player-team {
+            color: var(--green-mid);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .player-info p {
+            color: var(--gray-mid);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .player-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .player-stat {
+            text-align: center;
+        }
+
+        .player-stat .val {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--green-dark);
+        }
+
+        .player-stat .lbl {
+            font-size: 0.75rem;
+            color: var(--gray-mid);
+            text-transform: uppercase;
+        }
+
+        /* ===== CLUBS & LEAGUES ===== */
+        .leagues-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .league-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .league-item:hover {
+            transform: translateX(8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .league-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--green-pale);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .league-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .league-info p {
+            color: var(--gray-mid);
+            font-size: 0.9rem;
+        }
+
+        /* ===== STEPS ===== */
+        .steps-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--green-light), var(--green-dark));
+            border-radius: 2px;
+        }
+
+        .step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .step-num {
+            width: 60px;
+            height: 60px;
+            background: var(--green-light);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            z-index: 1;
+            box-shadow: 0 0 0 6px var(--green-pale);
+        }
+
+        .step-content {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow);
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--gray-mid);
+            font-size: 0.95rem;
+        }
+
+        /* ===== SALARY GUIDE ===== */
+        .salary-bars {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .salary-item {
+            margin-bottom: 2rem;
+        }
+
+        .salary-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .salary-level {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .salary-amount {
+            font-weight: 800;
+            color: var(--green-dark);
+        }
+
+        .salary-bar {
+            width: 100%;
+            height: 24px;
+            background: var(--gray-light);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .salary-fill {
+            height: 100%;
+            border-radius: 12px;
+            background: linear-gradient(90deg, var(--green-light), var(--green-mid));
+            transition: width 1.5s ease;
+            width: 0;
+        }
+
+        .salary-fill.animated { width: var(--target-width); }
+
+        /* ===== CAREER PATH ===== */
+        .career-path {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .career-stage {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            min-width: 180px;
+            transition: var(--transition);
+        }
+
+        .career-stage:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .career-stage .stage-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .career-stage h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .career-stage p {
+            font-size: 0.85rem;
+            color: var(--gray-mid);
+        }
+
+        .career-arrow {
+            font-size: 2rem;
+            color: var(--green-light);
+            font-weight: 700;
+        }
+
+        /* ===== QUIZ ===== */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .quiz-progress {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-progress-dot {
+            flex: 1;
+            height: 6px;
+            background: var(--gray-light);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .quiz-progress-dot.active { background: var(--green-light); }
+        .quiz-progress-dot.correct { background: #2ecc71; }
+        .quiz-progress-dot.wrong { background: var(--red); }
+
+        .quiz-question {
+            display: none;
+        }
+
+        .quiz-question.active { display: block; }
+
+        .quiz-question h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-question .q-number {
+            color: var(--green-mid);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-option {
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: var(--white);
+        }
+
+        .quiz-option:hover {
+            border-color: var(--green-light);
+            background: var(--green-pale);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--green-light);
+            background: var(--green-pale);
+        }
+
+        .quiz-option.correct {
+            border-color: #2ecc71;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--red);
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .quiz-option.disabled { pointer-events: none; }
+
+        .quiz-btn {
+            margin-top: 2rem;
+            padding: 0.8rem 2rem;
+            background: var(--green-light);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quiz-btn:hover { background: var(--green-mid); }
+        .quiz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .quiz-result {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .quiz-result.show { display: block; }
+
+        .quiz-result .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-result h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-result .score {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--green-mid);
+        }
+
+        /* ===== CONTACT FORM ===== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-info h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .contact-info p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-detail-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .contact-detail-text h4 {
+            color: var(--white);
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .contact-detail-text p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        .contact-form {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            color: var(--white);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--green-light);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .form-group select option {
+            background: var(--green-dark);
+            color: var(--white);
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--green-light), var(--green-mid));
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(29, 185, 84, 0.4);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--black);
+            color: var(--white);
+            padding: 3rem 2rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-col h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--green-light);
+        }
+
+        .footer-col a {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            padding: 0.3rem 0;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .footer-col a:hover { color: var(--white); padding-left: 5px; }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--green-light);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--green-dark);
+            transform: translateY(-3px);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 968px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 77, 46, 0.98);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 0.5rem;
+                transform: translateY(-150%);
+                transition: var(--transition);
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+            }
+
+            .nav-links.open { transform: translateY(0); }
+
+            .nav-links a {
+                padding: 0.8rem 1rem;
+                font-size: 1rem;
+                width: 100%;
+            }
+
+            .hamburger { display: flex; }
+
+            .skills-container { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+
+            .hero-stats { gap: 1.5rem; }
+
+            .career-path { flex-direction: column; }
+            .career-arrow { transform: rotate(90deg); }
+        }
+
+        @media (max-width: 600px) {
+            .section { padding: 4rem 1rem; }
+            .section-full { padding: 4rem 1rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+            .hero-stats { flex-direction: column; gap: 1rem; }
+            .quiz-container { padding: 1.5rem; }
+            .contact-form { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">⚽ Football<span>ZeroToPro</span></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#what-is-football">Basics</a></li>
+                <li><a href="#rules">Rules</a></li>
+                <li><a href="#positions">Positions</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#training">Training</a></li>
+                <li><a href="#tactics">Tactics</a></li>
+                <li><a href="#players">Players</a></li>
+                <li><a href="#clubs">Clubs</a></li>
+                <li><a href="#join-club">Join Club</a></li>
+                <li><a href="#salary">Salary</a></li>
+                <li><a href="#career">Career</a></li>
+                <li><a href="#quiz">Quiz</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="home">
+        <div class="hero-stadium">
+            <div class="field-lines"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">🏆 #1 Football Learning Platform</div>
+            <h1>From <span class="highlight">Zero</span> to <span class="highlight">Pro</span> Footballer</h1>
+            <p>Learn everything about football — from the basic rules to professional career paths. Your journey to becoming a footballer starts here.</p>
+            <div class="hero-buttons">
+                <a href="#what-is-football" class="btn btn-primary">🚀 Start Learning</a>
+                <a href="#quiz" class="btn btn-secondary">📝 Take the Quiz</a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="number">13+</div>
+                    <div class="label">Lessons</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">10</div>
+                    <div class="label">Quiz Questions</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">100%</div>
+                    <div class="label">Free</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 1. WHAT IS FOOTBALL ===== -->
+    <section class="section section-light" id="what-is-football">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">📖 Chapter 1</span>
+            <h2>What is Football?</h2>
+            <p>Football (also known as soccer in some countries) is the world's most popular sport, played by millions across the globe.</p>
+        </div>
+        <div class="cards-grid">
+            <div class="card animate-on-scroll">
+                <div class="card-icon">🌍</div>
+                <h3>The Beautiful Game</h3>
+                <p>Football is played between two teams of 11 players each. The objective is to score goals by getting the ball into the opponent's net using any part of the body except hands and arms (except the goalkeeper).</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">⏱️</div>
+                <h3>Match Duration</h3>
+                <p>A standard football match lasts 90 minutes, divided into two halves of 45 minutes each. There is a 15-minute half-time break. Additional stoppage time may be added by the referee.</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">🏟️</div>
+                <h3>The Pitch</h3>
+                <p>Football is played on a rectangular field called a pitch. A professional pitch is typically 100-110 meters long and 64-75 meters wide, with goals at each end measuring 7.32m wide and 2.44m high.</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">👥</div>
+                <h3>Teams & Players</h3>
+                <p>Each team has 11 players on the pitch: 1 goalkeeper, defenders, midfielders, and forwards. Teams can make up to 5 substitutions during a match from their bench.</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">🏆</div>
+                <h3>Competitions</h3>
+                <p>Football has domestic leagues (like the Premier League), continental tournaments (like the UEFA Champions League), and international competitions (like the FIFA World Cup).</p>
+            </div>
+            <div class="card animate-on-scroll">
+                <div class="card-icon">📜</div>
+                <h3>Governing Body</h3>
+                <p>FIFA (Fédération Internationale de Football Association) is the international governing body of football, founded in 1904. It organizes the FIFA World Cup every four years.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 2. RULES OF FOOTBALL ===== -->
+    <section class="section section-green" id="rules">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">📋 Chapter 2</span>
+            <h2>Rules of Football</h2>
+            <p>Understanding the official rules is essential. Here are the most important ones every player and fan should know.</p>
+        </div>
+        <div style="overflow-x: auto;" class="animate-on-scroll">
+            <table class="rules-table">
+                <thead>
+                    <tr>
+                        <th>Rule</th>
+                        <th>Explanation</th>
+                        <th>Punishment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Offside</strong></td>
+                        <td>A player is offside if they are nearer to the opponent's goal line than both the ball and the second-last opponent when the ball is played to them.</td>
+                        <td>Indirect free kick</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fouls</strong></td>
+                        <td>Illegal actions such as tripping, pushing, holding, or striking an opponent. Fouls can be careless, reckless, or using excessive force.</td>
+                        <td>Free kick or penalty</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Yellow Card</strong></td>
+                        <td>A caution given for unsporting behavior, dissent, persistent fouling, delaying restart, or failing to respect distance at set pieces.</td>
+                        <td><span class="card-badge yellow">⚠️ Warning</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Red Card</strong></td>
+                        <td>Given for serious foul play, violent conduct, spitting, denying an obvious goal-scoring opportunity, or receiving two yellow cards.</td>
+                        <td><span class="card-badge red">🟥 Sent Off</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Penalty Kick</strong></td>
+                        <td>Awarded when a foul is committed by a defending player inside their own penalty area. Taken from the penalty spot (12 yards/11 meters).</td>
+                        <td>Penalty kick</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Handball</strong></td>
+                        <td>Deliberately touching the ball with hand or arm (except the goalkeeper within their penalty area). The rules around accidental handball have been refined.</td>
+                        <td>Direct free kick</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Throw-in</strong></td>
+                        <td>Awarded when the ball fully crosses the touchline. The ball must be thrown from behind and over the head with both feet on the ground.</td>
+                        <td>Restart play</td>
+                    </tr>
+                    <tr>
+                        <td><strong>VAR</strong></td>
+                        <td>Video Assistant Review helps referees check goals, penalties, red cards, and mistaken identity using video technology.</td>
+                        <td>Referee review</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===== 3. PLAYER POSITIONS ===== -->
+    <section class="section section-light" id="positions">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">🧑‍🤝‍🧑 Chapter 3</span>
+            <h2>Player Positions</h2>
+            <p>Every position on the football pitch has a specific role. Understanding these will help you find where you fit best.</p>
+        </div>
+        <div class="positions-grid">
+            <div class="position-card animate-on-scroll">
+                <div class="position-header gk">
+                    <div class="pos-icon">🧤</div>
+                    <h3>Goalkeeper</h3>
+                    <div class="pos-abbr">GK</div>
+                </div>
+                <div class="position-body">
+                    <ul>
+                        <li>Protect the goal and prevent scoring</li>
+                        <li>Only player allowed to use hands (in box)</li>
+                        <li>Organize the defense</li>
+                        <li>Distribute the ball quickly</li>
+                        <li>Command the penalty area</li>
+                        <li>Make crucial saves in 1v1 situations</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="position-card animate-on-scroll">
+                <div class="position-header def">
+                    <div class="pos-icon">🛡️</div>
+                    <h3>Defender</h3>
+                    <div class="pos-abbr">CB / LB / RB</div>
+                </div>
+                <div class="position-body">
+                    <ul>
+                        <li>Stop the opposition from attacking</li>
+                        <li>Tackle, intercept, and clear the ball</li>
+                        <li>Mark opposing forwards</li>
+                        <li>Center backs play centrally</li>
+                        <li>Full-backs cover the wings</li>
+                        <li>Start attacks from the back</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="position-card animate-on-scroll">
+                <div class="position-header mid">
+                    <div class="pos-icon">⚙️</div>
+                    <h3>Midfielder</h3>
+                    <div class="pos-abbr">CM / CAM / CDM</div>
+                </div>
+                <div class="position-body">
+                    <ul>
+                        <li>Control the tempo of the game</li>
+                        <li>Pass and distribute the ball</li>
+                        <li>Defensive mids break up play</li>
+                        <li>Attacking mids create chances</li>
+                        <li>Cover the most ground in a match</li>
+                        <li>Link defense and attack</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="position-card animate-on-scroll">
+                <div class="position-header fwd">
+                    <div class="pos-icon">⚡</div>
+                    <h3>Forward</h3>
+                    <div class="pos-abbr">ST / LW / RW</div>
+                </div>
+                <div class="position-body">
+                    <ul>
+                        <li>Score goals and create chances</li>
+                        <li>Make runs behind the defense</li>
+                        <li>Finish with both feet and head</li>
+                        <li>Strikers play centrally</li>
+                        <li>Wingers play on the flanks</li>
+                        <li>Press the opposition defenders</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 4. BASIC SKILLS ===== -->
+    <section class="section section-green" id="skills">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">🦶 Chapter 4</span>
+            <h2>Basic Skills</h2>
+            <p>Master these fundamental skills to build a strong foundation for your football journey.</p>
+        </div>
+        <div class="skills-container">
+            <div class="skill-visual animate-on-scroll">
+                <div class="big-emoji" id="skillEmoji">⚽</div>
+                <h3 id="skillTitle">Dribbling</h3>
+                <p id="skillDesc">Control the ball while moving</p>
+            </div>
+            <div class="skill-details animate-on-scroll">
+                <h3>Essential Football Skills</h3>
+                <p>Every professional footballer started by mastering these core skills. Practice them daily!</p>
+                <ul class="skill-list">
+                    <li class="skill-item" data-skill="dribbling">
+                        <span class="skill-num">1</span>
+                        <div>
+                            <h4>Dribbling</h4>
+                            <p>Keep the ball close to your feet while running. Use the inside and outside of your feet. Practice with cones to improve agility and control.</p>
+                        </div>
+                    </li>
+                    <li class="skill-item" data-skill="passing">
+                        <span class="skill-num">2</span>
+                        <div>
+                            <h4>Passing</h4>
+                            <p>Use the inside of your foot for short passes and the laces for long passes. Practice with a wall or partner. Focus on accuracy over power.</p>
+                        </div>
+                    </li>
+                    <li class="skill-item" data-skill="shooting">
+                        <span class="skill-num">3</span>
+                        <div>
+                            <h4>Shooting</h4>
+                            <p>Strike the ball with your laces for power. Keep your head down and follow through. Practice shooting with both feet for versatility.</p>
+                        </div>
+                    </li>
+                    <li class="skill-item" data-skill="controlling">
+                        <span class="skill-num">4</span>
+                        <div>
+                            <h4>Ball Control</h4>
+                            <p>Use the sole, inside, or chest to trap the ball. Soften the impact on contact. Practice receiving passes from different angles and heights.</p>
+                        </div>
+                    </li>
+                    <li class="skill-item" data-skill="heading">
+                        <span class="skill-num">5</span>
+                        <div>
+                            <h4>Heading</h4>
+                            <p>Use your forehead to direct the ball. Jump with timing and use your neck muscles. Practice with gentle tosses before going for power headers.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 5. TRAINING GUIDE ===== -->
+    <section class="section section-light" id="training">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">💪 Chapter 5</span>
+            <h2>Training Guide</h2>
+            <p>A structured training plan to improve your fitness, skills, and game understanding.</p>
+        </div>
+        <div class="training-grid">
+            <div class="training-card animate-on-scroll">
+                <div class="training-card-header">
+                    <h3>🌅 Morning Routine</h3>
+                    <span>6:00 AM - 7:30 AM</span>
+                </div>
+                <div class="training-card-body">
+                    <ul>
+                        <li><strong>Warm-up:</strong> 10 min light jogging + dynamic stretches</li>
+                        <li><strong>Ball Mastery:</strong> 15 min juggling and close control</li>
+                        <li><strong>Passing Drills:</strong> 15 min wall passing or partner work</li>
+                        <li><strong>Sprinting:</strong> 10 min interval sprints (20m, 40m, 60m)</li>
+                        <li><strong>Cool-down:</strong> 10 min static stretching + hydration</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="training-card animate-on-scroll">
+                <div class="training-card-header">
+                    <h3>🌆 Afternoon Session</h3>
+                    <span>4:00 PM - 6:00 PM</span>
+                </div>
+                <div class="training-card-body">
+                    <ul>
+                        <li><strong>Technical:</strong> 20 min dribbling through cones</li>
+                        <li><strong>Shooting:</strong> 20 min finishing from different angles</li>
+                        <li><strong>Small-sided game:</strong> 30 min 3v3 or 5v5 match</li>
+                        <li><strong>Set pieces:</strong> 15 min free kicks and corners</li>
+                        <li><strong>Tactical review:</strong> 15 min watching match analysis</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="training-card animate-on-scroll">
+                <div class="training-card-header">
+                    <h3>🏋️ Fitness Tips</h3>
+                    <span>Daily Habits</span>
+                </div>
+                <div class="training-card-body">
+                    <ul>
+                        <li><strong>Nutrition:</strong> Eat balanced meals with protein, carbs, and vegetables</li>
+                        <li><strong>Hydration:</strong> Drink 2-3 liters of water daily</li>
+                        <li><strong>Sleep:</strong> Get 8-9 hours of quality sleep for recovery</li>
+                        <li><strong>Strength:</strong> Core exercises, squats, and planks 3x per week</li>
+                        <li><strong>Flexibility:</strong> Yoga or stretching sessions on rest days</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 6. FOOTBALL TACTICS ===== -->
+    <section class="section section-green" id="tactics">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">🧠 Chapter 6</span>
+            <h2>Football Tactics</h2>
+            <p>Understanding formations and strategies will help you think like a professional player.</p>
+        </div>
+        <div class="formations-grid">
+            <div class="formation-card animate-on-scroll">
+                <div class="formation-pitch">
+                    <div class="dot gk-dot" style="left:50%;top:90%"></div>
+                    <div class="dot def-dot" style="left:20%;top:70%"></div>
+                    <div class="dot def-dot" style="left:40%;top:75%"></div>
+                    <div class="dot def-dot" style="left:60%;top:75%"></div>
+                    <div class="dot def-dot" style="left:80%;top:70%"></div>
+                    <div class="dot mid-dot" style="left:30%;top:50%"></div>
+                    <div class="dot mid-dot" style="left:50%;top:55%"></div>
+                    <div class="dot mid-dot" style="left:70%;top:50%"></div>
+                    <div class="dot fwd-dot" style="left:35%;top:25%"></div>
+                    <div class="dot fwd-dot" style="left:65%;top:25%"></div>
+                    <div class="dot fwd-dot" style="left:50%;top:15%"></div>
+                </div>
+                <div class="formation-name">4-3-3</div>
+                <p class="formation-desc">Attacking formation with wingers. Used by Barcelona and Liverpool. Great for pressing and quick transitions.</p>
+            </div>
+            <div class="formation-card animate-on-scroll">
+                <div class="formation-pitch">
+                    <div class="dot gk-dot" style="left:50%;top:90%"></div>
+                    <div class="dot def-dot" style="left:20%;top:70%"></div>
+                    <div class="dot def-dot" style="left:40%;top:75%"></div>
+                    <div class="dot def-dot" style="left:60%;top:75%"></div>
+                    <div class="dot def-dot" style="left:80%;top:70%"></div>
+                    <div class="dot mid-dot" style="left:25%;top:50%"></div>
+                    <div class="dot mid-dot" style="left:50%;top:55%"></div>
+                    <div class="dot mid-dot" style="left:75%;top:50%"></div>
+                    <div class="dot fwd-dot" style="left:40%;top:25%"></div>
+                    <div class="dot fwd-dot" style="left:60%;top:25%"></div>
+                </div>
+                <div class="formation-name">4-4-2</div>
+                <p class="formation-desc">Classic balanced formation. Two strikers provide a strong attacking partnership. Solid defensively with two banks of four.</p>
+            </div>
+            <div class="formation-card animate-on-scroll">
+                <div class="formation-pitch">
+                    <div class="dot gk-dot" style="left:50%;top:90%"></div>
+                    <div class="dot def-dot" style="left:15%;top:70%"></div>
+                    <div class="dot def-dot" style="left:35%;top:75%"></div>
+                    <div class="dot def-dot" style="left:50%;top:80%"></div>
+                    <div class="dot def-dot" style="left:65%;top:75%"></div>
+                    <div class="dot def-dot" style="left:85%;top:70%"></div>
+                    <div class="dot mid-dot" style="left:35%;top:50%"></div>
+                    <div class="dot mid-dot" style="left:50%;top:55%"></div>
+                    <div class="dot mid-dot" style="left:65%;top:50%"></div>
+                    <div class="dot fwd-dot" style="left:50%;top:20%"></div>
+                </div>
+                <div class="formation-name">5-3-2</div>
+                <p class="formation-desc">Defensive formation with 5 at the back. Wing-backs provide width. Strong counter-attacking potential with two strikers.</p>
+            </div>
+            <div class="formation-card animate-on-scroll">
+                <div class="formation-pitch">
+                    <div class="dot gk-dot" style="left:50%;top:90%"></div>
+                    <div class="dot def-dot" style="left:20%;top:70%"></div>
+                    <div class="dot def-dot" style="left:40%;top:75%"></div>
+                    <div class="dot def-dot" style="left:60%;top:75%"></div>
+                    <div class="dot def-dot" style="left:80%;top:70%"></div>
+                    <div class="dot mid-dot" style="left:50%;top:60%"></div>
+                    <div class="dot mid-dot" style="left:30%;top:45%"></div>
+                    <div class="dot mid-dot" style="left:70%;top:45%"></div>
+                    <div class="dot mid-dot" style="left:50%;top:35%"></div>
+                    <div class="dot fwd-dot" style="left:50%;top:15%"></div>
+                </div>
+                <div class="formation-name">4-2-3-1</div>
+                <p class="formation-desc">Modern versatile formation. Two defensive mids protect the back line. Attacking mid links play to the lone striker.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 7. FAMOUS PLAYERS ===== -->
+    <section class="section section-light" id="players">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">⭐ Chapter 7</span>
+            <h2>Famous Players</h2>
+            <p>Get inspired by the greatest footballers of all time who started exactly where you are — with a dream.</p>
+        </div>
+        <div class="players-grid">
+            <div class="player-card animate-on-scroll">
+                <div class="player-avatar messi">🐐</div>
+                <div class="player-info">
+                    <h3>Lionel Messi</h3>
+                    <div class="player-team">Inter Miami CF</div>
+                    <p>Widely regarded as the greatest of all time. 8 Ballon d'Or winner, World Cup champion 2022. Known for his incredible dribbling, vision, and goal-scoring ability.</p>
+                    <div class="player-stats">
+                        <div class="player-stat"><div class="val">8</div><div class="lbl">Ballon d'Or</div></div>
+                        <div class="player-stat"><div class="val">800+</div><div class="lbl">Goals</div></div>
+                        <div class="player-stat"><div class="val">1</div><div class="lbl">World Cup</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card animate-on-scroll">
+                <div class="player-avatar ronaldo">💪</div>
+                <div class="player-info">
+                    <h3>Cristiano Ronaldo</h3>
+                    <div class="player-team">Al Nassr FC</div>
+                    <p>The epitome of hard work and dedication. 5 Ballon d'Or winner, all-time top international scorer. Known for his athleticism, aerial ability, and clutch performances.</p>
+                    <div class="player-stats">
+                        <div class="player-stat"><div class="val">5</div><div class="lbl">Ballon d'Or</div></div>
+                        <div class="player-stat"><div class="val">900+</div><div class="lbl">Goals</div></div>
+                        <div class="player-stat"><div class="val">5</div><div class="lbl">UCL Titles</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card animate-on-scroll">
+                <div class="player-avatar neymar">🎭</div>
+                <div class="player-info">
+                    <h3>Neymar Jr</h3>
+                    <div class="player-team">Al Hilal</div>
+                    <p>The magician of football. Known for his flair, creativity, and incredible skill moves. One of the most entertaining players to ever grace the game.</p>
+                    <div class="player-stats">
+                        <div class="player-stat"><div class="val">400+</div><div class="lbl">Goals</div></div>
+                        <div class="player-stat"><div class="val">1</div><div class="lbl">UCL Title</div></div>
+                        <div class="player-stat"><div class="val">100+</div><div class="lbl">Assists</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="player-card animate-on-scroll">
+                <div class="player-avatar mbahape">🚀</div>
+                <div class="player-info">
+                    <h3>Kylian Mbappé</h3>
+                    <div class="player-team">Real Madrid</div>
+                    <p>The future of football. Blistering pace, clinical finishing, and World Cup winner at just 19. Already one of the best players in the world.</p>
+                    <div class="player-stats">
+                        <div class="player-stat"><div class="val">300+</div><div class="lbl">Goals</div></div>
+                        <div class="player-stat"><div class="val">1</div><div class="lbl">World Cup</div></div>
+                        <div class="player-stat"><div class="val">4</div><div class="lbl">Ligue 1</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 8. CLUBS & LEAGUES ===== -->
+    <section class="section section-green" id="clubs">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">🏟️ Chapter 8</span>
+            <h2>Clubs & Leagues</h2>
+            <p>Understanding the football pyramid and the biggest competitions in the world.</p>
+        </div>
+        <div class="leagues-list">
+            <div class="league-item animate-on-scroll">
+                <div class="league-icon">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+                <div class="league-info">
+                    <h3>Premier League (England)</h3>
+                    <p>The most-watched football league in the world. 20 teams compete from August to May. Known for its intensity, global stars, and competitive nature.</p>
+                </div>
+            </div>
+            <div class="league-item animate-on-scroll">
+                <div class="league-icon">🇪🇸</div>
+                <div class="league-info">
+                    <h3>La Liga (Spain)</h3>
+                    <p>Home to technical, possession-based football. Features El Clásico between Real Madrid and Barcelona — one of the biggest rivalries in sports.</p>
+                </div>
+            </div>
+            <div class="league-item animate-on-scroll">
+                <div class="league-icon">🇩🇪</div>
+                <div class="league-info">
+                    <h3>Bundesliga (Germany)</h3>
+                    <p>Known for high-scoring matches, passionate fans, and youth development. Bayern Munich is the dominant force with Borussia Dortmund as fierce rivals.</p>
+                </div>
+            </div>
+            <div class="league-item animate-on-scroll">
+                <div class="league-icon">🇮🇹</div>
+                <div class="league-info">
+                    <h3>Serie A (Italy)</h3>
+                    <p>Historically known for tactical brilliance and strong defending. Home to legendary clubs like AC Milan, Inter Milan, and Juventus.</p>
+                </div>
+            </div>
+            <div class="league-item animate-on-scroll">
+                <div class="league-icon">🇫🇷</div>
+                <div class="league-info">
+                    <h3>Ligue 1 (France)</h3>
+                    <p>A league known for developing young talent. PSG has become a global powerhouse. Many future stars emerge from French academies.</p>
+                </div>
+            </div>
+            <div class="league-item animate-on-scroll">
+                <div class="league-icon">🌍</div>
+                <div class="league-info">
+                    <h3>UEFA Champions League</h3>
+                    <p>The most prestigious club competition in the world. Top teams from European leagues compete for the ultimate club prize. Watched by billions.</p>
+                </div>
+            </div>
+            <div class="league-item animate-on-scroll">
+                <div class="league-icon">🏆</div>
+                <div class="league-info">
+                    <h3>FIFA World Cup</h3>
+                    <p>The biggest sporting event on the planet. Held every 4 years, national teams compete for glory. The 2022 World Cup in Qatar was won by Argentina.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 9. HOW TO JOIN A CLUB ===== -->
+    <section class="section section-light" id="join-club">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">🤝 Chapter 9</span>
+            <h2>How to Join a Club</h2>
+            <p>Follow these steps to get noticed and join a football club, whether as a beginner or aspiring professional.</p>
+        </div>
+        <div class="steps-container">
+            <div class="step animate-on-scroll">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <h3>Start Playing Locally</h3>
+                    <p>Join a local youth team, school team, or community club. Regular match experience is essential for development. Don't worry about the level — just play!</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <h3>Attend Open Trials</h3>
+                    <p>Many clubs hold open trials and scouting events. Research academies in your area and attend their trial days. Come prepared with proper gear and give 100%.</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <h3>Create a Highlight Video</h3>
+                    <p>Record your best moments in matches and training. Edit them into a 3-5 minute highlight reel showing your skills, game intelligence, and athleticism.</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <h3>Network with Coaches</h3>
+                    <p>Build relationships with coaches, scouts, and senior players. Attend football camps and clinics. A recommendation from a trusted coach can open doors.</p>
+                </div>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                    <h3>Stay Consistent & Patient</h3>
+                    <p>Rejection is part of the journey. Keep training, keep improving, and keep trying. Many pros were rejected multiple times before getting their break. Never give up!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 10. SALARY GUIDE ===== -->
+    <section class="section section-dark" id="salary">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">💰 Chapter 10</span>
+            <h2>Salary Guide</h2>
+            <p>Understanding football earnings from amateur level to the world's highest-paid players.</p>
+        </div>
+        <div class="salary-bars animate-on-scroll">
+            <div class="salary-item">
+                <div class="salary-header">
+                    <span class="salary-level">🏫 School / Amateur Player</span>
+                    <span class="salary-amount">$0 - $100/month</span>
+                </div>
+                <div class="salary-bar"><div class="salary-fill" style="--target-width: 2%"></div></div>
+            </div>
+            <div class="salary-item">
+                <div class="salary-header">
+                    <span class="salary-level">🏟️ Youth Academy Player</span>
+                    <span class="salary-amount">$100 - $500/month</span>
+                </div>
+                <div class="salary-bar"><div class="salary-fill" style="--target-width: 5%"></div></div>
+            </div>
+            <div class="salary-item">
+                <div class="salary-header">
+                    <span class="salary-level">📋 Semi-Professional Player</span>
+                    <span class="salary-amount">$500 - $3,000/month</span>
+                </div>
+                <div class="salary-bar"><div class="salary-fill" style="--target-width: 15%"></div></div>
+            </div>
+            <div class="salary-item">
+                <div class="salary-header">
+                    <span class="salary-level">⚽ Professional Player (Lower League)</span>
+                    <span class="salary-amount">$3,000 - $15,000/month</span>
+                </div>
+                <div class="salary-bar"><div class="salary-fill" style="--target-width: 35%"></div></div>
+            </div>
+            <div class="salary-item">
+                <div class="salary-header">
+                    <span class="salary-level">🌟 Professional Player (Top League)</span>
+                    <span class="salary-amount">$50,000 - $200,000/month</span>
+                </div>
+                <div class="salary-bar"><div class="salary-fill" style="--target-width: 60%"></div></div>
+            </div>
+            <div class="salary-item">
+                <div class="salary-header">
+                    <span class="salary-level">👑 Elite / World-Class Player</span>
+                    <span class="salary-amount">$500,000 - $2,000,000+/month</span>
+                </div>
+                <div class="salary-bar"><div class="salary-fill" style="--target-width: 100%"></div></div>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 2rem; color: rgba(255,255,255,0.5); font-size: 0.85rem;">* Figures are approximate and vary by country, league, and individual contracts. Endorsements can significantly increase earnings.</p>
+    </section>
+
+    <!-- ===== 11. CAREER PATH ===== -->
+    <section class="section section-green" id="career">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">🛤️ Chapter 11</span>
+            <h2>Career Path</h2>
+            <p>The journey from a beginner to a professional footballer follows a clear progression.</p>
+        </div>
+        <div class="career-path animate-on-scroll">
+            <div class="career-stage">
+                <div class="stage-icon">🏫</div>
+                <h3>School Football</h3>
+                <p>Start playing at school. Learn basics, develop passion, and join school teams. Ages 6-14.</p>
+            </div>
+            <div class="career-arrow">➡️</div>
+            <div class="career-stage">
+                <div class="stage-icon">🎓</div>
+                <h3>Youth Academy</h3>
+                <p>Join a club's youth academy. Receive professional coaching and compete in youth leagues. Ages 12-18.</p>
+            </div>
+            <div class="career-arrow">➡️</div>
+            <div class="career-stage">
+                <div class="stage-icon">📋</div>
+                <h3>Reserve / B Team</h3>
+                <p>Progress to the reserve team. Train with senior squad and play in lower divisions. Ages 17-21.</p>
+            </div>
+            <div class="career-arrow">➡️</div>
+            <div class="career-stage">
+                <div class="stage-icon">⚽</div>
+                <h3>Professional Club</h3>
+                <p>Sign your first professional contract. Compete in senior leagues and build your career. Age 18+.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 12. QUIZ SECTION ===== -->
+    <section class="section section-light" id="quiz">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">📝 Chapter 12</span>
+            <h2>Test Your Knowledge</h2>
+            <p>Take this 10-question quiz to see how much you've learned about football!</p>
+        </div>
+        <div class="quiz-container animate-on-scroll" id="quizContainer">
+            <div class="quiz-progress" id="quizProgress"></div>
+            <div id="quizQuestions"></div>
+            <div class="quiz-result" id="quizResult">
+                <div class="result-icon" id="resultIcon">🏆</div>
+                <h3 id="resultTitle">Quiz Complete!</h3>
+                <div class="score" id="resultScore">0/10</div>
+                <p id="resultMessage" style="margin: 1rem 0; color: var(--gray-mid);"></p>
+                <button class="quiz-btn" onclick="restartQuiz()">🔄 Try Again</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 13. CONTACT / JOIN ===== -->
+    <section class="section section-dark section-full" id="contact">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">📬 Chapter 13</span>
+            <h2 style="color: var(--white);">Join Our Community</h2>
+            <p>Register to receive training tips, exclusive content, and connect with fellow football enthusiasts.</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info animate-on-scroll">
+                <h3>Start Your Football Journey Today</h3>
+                <p>Join thousands of aspiring footballers who are learning, training, and growing together. Our community provides resources, mentorship, and motivation.</p>
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">📧</div>
+                    <div class="contact-detail-text">
+                        <h4>Email Us</h4>
+                        <p>info@footballzerotopro.com</p>
+                    </div>
+                </div>
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">📍</div>
+                    <div class="contact-detail-text">
+                        <h4>Location</h4>
+                        <p>Worldwide — Learn from anywhere</p>
+                    </div>
+                </div>
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">⏰</div>
+                    <div class="contact-detail-text">
+                        <h4>Support</h4>
+                        <p>Available 24/7 for your questions</p>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form animate-on-scroll" id="contactForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" placeholder="Your age" min="5" max="50">
+                </div>
+                <div class="form-group">
+                    <label for="level">Current Level</label>
+                    <select id="level">
+                        <option value="">Select your level</option>
+                        <option value="beginner">Complete Beginner</option>
+                        <option value="school">School Player</option>
+                        <option value="youth">Youth Academy</option>
+                        <option value="semi">Semi-Professional</option>
+                        <option value="fan">Football Fan (Learning)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Your Goals</label>
+                    <textarea id="message" rows="4" placeholder="Tell us about your football goals..."></textarea>
+                </div>
+                <button type="submit" class="form-submit">🚀 Register Now</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>⚽ FootballZeroToPro</h4>
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 0.5rem;">The complete educational platform for aspiring footballers. Learn, train, and achieve your dreams.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="#what-is-football">What is Football</a>
+                <a href="#rules">Rules</a>
+                <a href="#positions">Positions</a>
+                <a href="#skills">Basic Skills</a>
+                <a href="#training">Training Guide</a>
+            </div>
+            <div class="footer-col">
+                <h4>Advanced</h4>
+                <a href="#tactics">Tactics</a>
+                <a href="#players">Famous Players</a>
+                <a href="#clubs">Clubs & Leagues</a>
+                <a href="#salary">Salary Guide</a>
+                <a href="#career">Career Path</a>
+            </div>
+            <div class="footer-col">
+                <h4>Interactive</h4>
+                <a href="#quiz">Take the Quiz</a>
+                <a href="#contact">Join Community</a>
+                <a href="#join-club">How to Join a Club</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Football Zero to Pro. All rights reserved. Built with ❤️ for football lovers everywhere.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        // ===== NAVIGATION =====
+        const navbar = document.getElementById('navbar');
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        const backToTop = document.getElementById('backToTop');
+        const navAnchors = document.querySelectorAll('.nav-links a');
+
+        // Hamburger toggle
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+
+        // Close mobile menu on link click
+        navAnchors.forEach(anchor => {
+            anchor.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+
+        // Scroll effects
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+
+            // Navbar background
+            if (scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Back to top button
+            if (scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+
+            // Active nav link
+            const sections = document.querySelectorAll('section[id]');
+            sections.forEach(section => {
+                const top = section.offsetTop - 100;
+                const height = section.offsetHeight;
+                const id = section.getAttribute('id');
+                if (scrollY >= top && scrollY < top + height) {
+                    navAnchors.forEach(a => a.classList.remove('active'));
+                    const activeLink = document.querySelector(`.nav-links a[href="#${id}"]`);
+                    if (activeLink) activeLink.classList.add('active');
+                }
+            });
+        });
+
+        // ===== SCROLL ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+        // ===== SALARY BARS ANIMATION =====
+        const salaryObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.salary-fill').forEach((bar, i) => {
+                        setTimeout(() => {
+                            bar.classList.add('animated');
+                        }, i * 200);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const salarySection = document.getElementById('salary');
+        if (salarySection) salaryObserver.observe(salarySection);
+
+        // ===== SKILL INTERACTION =====
+        const skillData = {
+            dribbling: { emoji: '⚽', title: 'Dribbling', desc: 'Control the ball while moving' },
+            passing: { emoji: '🎯', title: 'Passing', desc: 'Accurate ball distribution' },
+            shooting: { emoji: '💥', title: 'Shooting', desc: 'Powerful and accurate shots' },
+            controlling: { emoji: '🤲', title: 'Ball Control', desc: 'Trap and receive the ball' },
+            heading: { emoji: '🧠', title: 'Heading', desc: 'Direct the ball with your head' }
+        };
+
+        document.querySelectorAll('.skill-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                const skill = item.dataset.skill;
+                const data = skillData[skill];
+                if (data) {
+                    document.getElementById('skillEmoji').textContent = data.emoji;
+                    document.getElementById('skillTitle').textContent = data.title;
+                    document.getElementById('skillDesc').textContent = data.desc;
+                }
+            });
+        });
+
+        // ===== QUIZ =====
+        const quizData = [
+            {
+                question: "How many players are on a football team on the pitch?",
+                options: ["9", "10", "11", "12"],
+                correct: 2
+            },
+            {
+                question: "What is the standard duration of a football match?",
+                options: ["60 minutes", "80 minutes", "90 minutes", "120 minutes"],
+                correct: 2
+            },
+            {
+                question: "Which body part is NOT allowed to touch the ball (except the goalkeeper)?",
+                options: ["Head", "Chest", "Hand/Arm", "Foot"],
+                correct: 2
+            },
+            {
+                question: "What does FIFA stand for?",
+                options: ["Football International Federation Association", "Fédération Internationale de Football Association", "Football International Football Alliance", "Federation of International Football Associations"],
+                correct: 1
+            },
+            {
+                question: "What happens when a player receives two yellow cards in a match?",
+                options: ["Nothing", "A penalty is awarded", "They receive a red card and are sent off", "The team loses a player for 10 minutes"],
+                correct: 2
+            },
+            {
+                question: "Which formation uses 4 defenders, 3 midfielders, and 3 forwards?",
+                options: ["4-4-2", "3-5-2", "4-3-3", "4-2-3-1"],
+                correct: 2
+            },
+            {
+                question: "How many Ballon d'Or awards has Lionel Messi won (as of 2026)?",
+                options: ["5", "6", "7", "8"],
+                correct: 3
+            },
+            {
+                question: "What is the distance of a penalty kick from the goal?",
+                options: ["10 yards", "11 yards", "12 yards", "15 yards"],
+                correct: 2
+            },
+            {
+                question: "Which competition is considered the most prestigious club tournament in the world?",
+                options: ["FIFA World Cup", "UEFA Champions League", "Premier League", "Copa America"],
+                correct: 1
+            },
+            {
+                question: "What is the first step in a football career path?",
+                options: ["Signing a pro contract", "Playing at youth academy", "School / local football", "Attending open trials"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = [];
+
+        function initQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = [];
+
+            // Create progress dots
+            const progressContainer = document.getElementById('quizProgress');
+            progressContainer.innerHTML = '';
+            quizData.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'quiz-progress-dot';
+                dot.id = `progress-${i}`;
+                progressContainer.appendChild(dot);
+            });
+
+            // Create questions
+            const questionsContainer = document.getElementById('quizQuestions');
+            questionsContainer.innerHTML = '';
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = `quiz-question ${index === 0 ? 'active' : ''}`;
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <span class="q-number">Question ${index + 1} of ${quizData.length}</span>
+                    <h3>${q.question}</h3>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, optIndex) => `
+                            <div class="quiz-option" onclick="selectAnswer(${index}, ${optIndex})">${opt}</div>
+                        `).join('')}
+                    </div>
+                    <button class="quiz-btn" id="nextBtn-${index}" onclick="nextQuestion(${index})" disabled>
+                        ${index < quizData.length - 1 ? 'Next Question →' : 'See Results 🏆'}
+                    </button>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+
+            document.getElementById('quizResult').classList.remove('show');
+        }
+
+        function selectAnswer(qIndex, optIndex) {
+            if (answered[qIndex]) return;
+            answered[qIndex] = optIndex;
+
+            const question = document.getElementById(`question-${qIndex}`);
+            const options = question.querySelectorAll('.quiz-option');
+            const correct = quizData[qIndex].correct;
+
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === correct) opt.classList.add('correct');
+                if (i === optIndex && i !== correct) opt.classList.add('wrong');
+            });
+
+            if (optIndex === correct) {
+                score++;
+                document.getElementById(`progress-${qIndex}`).classList.add('correct');
+            } else {
+                document.getElementById(`progress-${qIndex}`).classList.add('wrong');
+            }
+
+            document.getElementById(`nextBtn-${qIndex}`).disabled = false;
+        }
+
+        function nextQuestion(qIndex) {
+            if (qIndex < quizData.length - 1) {
+                document.getElementById(`question-${qIndex}`).classList.remove('active');
+                document.getElementById(`question-${qIndex + 1}`).classList.add('active');
+                document.getElementById(`progress-${qIndex + 1}`).classList.add('active');
+                currentQuestion = qIndex + 1;
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.querySelectorAll('.quiz-question').forEach(q => q.classList.remove('active'));
+            const result = document.getElementById('quizResult');
+            result.classList.add('show');
+
+            document.getElementById('resultScore').textContent = `${score}/${quizData.length}`;
+
+            const percentage = (score / quizData.length) * 100;
+            if (percentage === 100) {
+                document.getElementById('resultIcon').textContent = '🏆';
+                document.getElementById('resultTitle').textContent = 'Perfect Score!';
+                document.getElementById('resultMessage').textContent = 'Incredible! You\'re a football genius! You\'re ready for the professional level.';
+            } else if (percentage >= 70) {
+                document.getElementById('resultIcon').textContent = '🌟';
+                document.getElementById('resultTitle').textContent = 'Great Job!';
+                document.getElementById('resultMessage').textContent = 'You have a solid understanding of football. Keep learning and you\'ll be a pro in no time!';
+            } else if (percentage >= 40) {
+                document.getElementById('resultIcon').textContent = '💪';
+                document.getElementById('resultTitle').textContent = 'Good Start!';
+                document.getElementById('resultMessage').textContent = 'You\'re on the right track! Review the lessons above and try again to improve your score.';
+            } else {
+                document.getElementById('resultIcon').textContent = '📚';
+                document.getElementById('resultTitle').textContent = 'Keep Learning!';
+                document.getElementById('resultMessage').textContent = 'Don\'t worry! Every pro started as a beginner. Go through the lessons again and retake the quiz.';
+            }
+        }
+
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Initialize quiz on load
+        initQuiz();
+
+        // ===== CONTACT FORM =====
+        function handleSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            if (name && email) {
+                alert(`🎉 Welcome to Football Zero to Pro, ${name}!\n\nYour registration has been received. We'll send training tips and updates to ${email}.\n\nLet's start your football journey! ⚽`);
+                document.getElementById('contactForm').reset();
+            }
+        }
+
+        // ===== SMOOTH SCROLL FOR ALL ANCHOR LINKS =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 70;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // ===== TYPING EFFECT FOR HERO (optional enhancement) =====
+        console.log('%c⚽ Football Zero to Pro', 'font-size: 24px; font-weight: bold; color: #1db954;');
+        console.log('%cBuilt for aspiring footballers everywhere!', 'font-size: 14px; color: #666;');
+    </script>
+</body>
+</html>
